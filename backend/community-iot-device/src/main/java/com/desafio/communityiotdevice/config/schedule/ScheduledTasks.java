@@ -1,4 +1,4 @@
-package com.desafio.communityiotdevice.modules.schedule;
+package com.desafio.communityiotdevice.config.schedule;
 
 import com.desafio.communityiotdevice.modules.commanddescription.model.CommandDescription;
 import com.desafio.communityiotdevice.modules.device.model.Device;

@@ -18,8 +18,8 @@ public class DeviceController {
     @GetMapping
     public Page<DeviceResponse> list(@RequestParam(required = false) String filter,
                                      @RequestParam(defaultValue = "0") int page,
-                                     @RequestParam(defaultValue = "10") int size){
-        return deviceService.getDevices(filter, page, size);
+                                     @RequestParam(defaultValue = "10") int rpp){
+        return deviceService.getDevices(filter, page, rpp);
     }
 
     @GetMapping("{id}")

@@ -17,8 +17,8 @@ public class ParameterController {
 
     @GetMapping
     public Page<ParameterResponse> list(@RequestParam(defaultValue = "0") int page,
-                                      @RequestParam(defaultValue = "10") int size){
-        return parameterService.getParameters(page, size);
+                                      @RequestParam(defaultValue = "10") int rpp){
+        return parameterService.getParameters(page, rpp);
     }
 
     @GetMapping("{id}")

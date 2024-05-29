@@ -1,6 +1,7 @@
 package com.desafio.communityiotdevice.modules.user.controller;
 
 import com.desafio.communityiotdevice.config.messages.SuccessResponse;
+import com.desafio.communityiotdevice.modules.user.dto.LoginResponse;
 import com.desafio.communityiotdevice.modules.user.dto.UserRequest;
 import com.desafio.communityiotdevice.modules.user.dto.UserResponse;
 import com.desafio.communityiotdevice.modules.user.service.UserService;
@@ -15,11 +16,16 @@ public class UserController {
 
     private final UserService userService;
 
+    @PostMapping("login")
+    public LoginResponse login(@RequestBody UserRequest userRequest) {
+        return userService.login(userRequest);
+    }
+
     @GetMapping
     public Page<UserResponse> list(@RequestParam(required = false) String filter,
                                       @RequestParam(defaultValue = "0") int page,
-                                      @RequestParam(defaultValue = "10") int size){
-        return userService.getUsers(filter, page, size);
+                                      @RequestParam(defaultValue = "10") int rpp){
+        return userService.getUsers(filter, page, rpp);
     }
 
     @GetMapping("{id}")

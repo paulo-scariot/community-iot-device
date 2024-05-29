@@ -9,5 +9,6 @@ public class DeviceRequest {
     private String description;
     private String manufacturer;
     private String url;
+    private Boolean status;
 
 }

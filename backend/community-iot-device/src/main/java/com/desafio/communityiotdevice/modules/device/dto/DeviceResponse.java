@@ -15,6 +15,7 @@ public class DeviceResponse {
     private String description;
     private String manufacturer;
     private String url;
+    private Boolean status;
     private UserResponse user;
     private List<CommandDescriptionResponse> commandDescriptions;
 
@@ -25,6 +26,7 @@ public class DeviceResponse {
         deviceResponse.setDescription(device.getDescription());
         deviceResponse.setManufacturer(device.getManufacturer());
         deviceResponse.setUrl(device.getUrl());
+        deviceResponse.setStatus(device.getStatus());
         deviceResponse.setUser(UserResponse.of(device.getUser()));
         deviceResponse.setCommandDescriptions(device.getCommandDescriptions().stream().map(CommandDescriptionResponse::of).toList());
         return deviceResponse;

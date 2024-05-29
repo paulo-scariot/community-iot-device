@@ -36,6 +36,9 @@ public class Device {
     @Column(name = "url", nullable = false)
     private String url;
 
+    @Column(name = "status", nullable = false)
+    private Boolean status = Boolean.TRUE;
+
     @OneToMany(mappedBy = "device", targetEntity = CommandDescription.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<CommandDescription> commandDescriptions = new ArrayList<>();
 

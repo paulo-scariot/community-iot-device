@@ -18,8 +18,8 @@ public class CommandController {
     @GetMapping
     public Page<CommandResponse> list(@RequestParam(required = false) String filter,
                                       @RequestParam(defaultValue = "0") int page,
-                                      @RequestParam(defaultValue = "10") int size){
-        return commandService.getCommands(filter, page, size);
+                                      @RequestParam(defaultValue = "10") int rpp){
+        return commandService.getCommands(filter, page, rpp);
     }
 
     @GetMapping("{id}")

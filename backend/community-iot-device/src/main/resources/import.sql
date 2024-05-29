@@ -12,9 +12,13 @@ INSERT INTO parameters (name, description, command_id) VALUES ('parameter6', 'de
 INSERT INTO users (username, password) VALUES ('admin', '$2a$12$jSaF6lQMuyFefy5Tf4a94eoVrPoxGUkY7XzFo.APYU4JYguIpcfXa');
 INSERT INTO users (username, password) VALUES ('user', '$2a$12$xlRFhVPqOHGEPyMV8wUyiONS3XzOvlBYQrUjGkHpa6mTUu3kGkJje');
 
-INSERT INTO devices (identifier, description, manufacturer, url ,user_id) VALUES ('device1', 'descricao', 'manufacturer', 'localhost', 1);
-INSERT INTO devices (identifier, description, manufacturer, url ,user_id) VALUES ('device2', 'descricao', 'manufacturer', 'localhost', 1);
-INSERT INTO devices (identifier, description, manufacturer, url ,user_id) VALUES ('device3', 'descricao', 'manufacturer', 'localhost', 2);
+INSERT INTO devices (identifier, description, manufacturer, url, status, user_id) VALUES ('device1', 'descricao', 'manufacturer', 'localhost', true, 1);
+INSERT INTO devices (identifier, description, manufacturer, url, status, user_id) VALUES ('device2', 'descricao', 'manufacturer', 'localhost', true, 1);
+INSERT INTO devices (identifier, description, manufacturer, url, status, user_id) VALUES ('device3', 'descricao', 'manufacturer', 'localhost', true, 2);
+INSERT INTO devices (identifier, description, manufacturer, url, status, user_id) VALUES ('device4', 'descricao', 'manufacturer', 'localhost', true, 2);
+INSERT INTO devices (identifier, description, manufacturer, url, status, user_id) VALUES ('device5', 'descricao', 'manufacturer', 'localhost', false, 2);
+INSERT INTO devices (identifier, description, manufacturer, url, status, user_id) VALUES ('device6', 'descricao', 'manufacturer', 'localhost', true, 2);
+INSERT INTO devices (identifier, description, manufacturer, url, status, user_id) VALUES ('device7', 'descricao', 'manufacturer', 'localhost', true, 2);
 
 INSERT INTO command_descriptions (operation, description, result, format, device_id ,command_id) VALUES ('operation1', 'descricao', 'result', 'string', 1, 1);
 INSERT INTO command_descriptions (operation, description, result, format, device_id ,command_id) VALUES ('operation2', 'descricao', 'result', 'string', 1, 1);

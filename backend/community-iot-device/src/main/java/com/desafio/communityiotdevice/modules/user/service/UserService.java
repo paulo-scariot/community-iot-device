@@ -2,6 +2,7 @@ package com.desafio.communityiotdevice.modules.user.service;
 
 import com.desafio.communityiotdevice.config.exception.ValidationException;
 import com.desafio.communityiotdevice.config.messages.SuccessResponse;
+import com.desafio.communityiotdevice.modules.user.dto.LoginResponse;
 import com.desafio.communityiotdevice.modules.user.dto.UserRequest;
 import com.desafio.communityiotdevice.modules.user.dto.UserResponse;
 import com.desafio.communityiotdevice.modules.user.model.User;
@@ -11,13 +12,16 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Base64;
 
 import static org.springframework.util.ObjectUtils.isEmpty;
 
@@ -29,6 +33,9 @@ public class UserService implements UserDetailsService {
 
     @Lazy
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Lazy
+    private final AuthenticationManager authenticationManager;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -42,6 +49,23 @@ public class UserService implements UserDetailsService {
                 .username(userDetails.getUsername())
                 .password(userDetails.getPassword())
                 .build();
+    }
+
+    public LoginResponse login(UserRequest userRequest) {
+        try{
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(userRequest.getUsername(), userRequest.getPassword()));
+        } catch (BadCredentialsException e) {
+            throw new ValidationException("Invalid username or password");
+        }
+
+        UserDetails userDetails = this.loadUserByUsername(userRequest.getUsername());
+
+        if (userDetails != null) {
+            String auth = userRequest.getUsername() + ":" + userRequest.getPassword();
+            return new LoginResponse(Base64.getEncoder().encodeToString(auth.getBytes()));
+        }
+        throw new ValidationException("Invalid username or password");
     }
 
     public Page<UserResponse> getUsers(String filter, int page, int size) {
