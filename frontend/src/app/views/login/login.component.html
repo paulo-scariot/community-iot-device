@@ -1,0 +1,19 @@
+<form [formGroup]="loginForm">
+  <mat-form-field fxFlex appearance="outline">
+    <input matInput placeholder="Username" formControlName="username">
+    <mat-error *ngIf="loginForm.get('username')?.invalid && loginForm.get('user')?.touched">Campo não pode ser vazio</mat-error>
+  </mat-form-field>
+
+  <mat-form-field fxFlex appearance="outline">
+    <input matInput placeholder="Password" formControlName="password" [type]="showPassword ? 'text' : 'password'" autocomplete>
+    <mat-icon matSuffix (click)="showPassword = !showPassword">{{ showPassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+    <mat-error *ngIf="loginForm.get('password')?.invalid && loginForm.get('pass')?.touched">Campo não pode ser vazio</mat-error>
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" id="login-btn"
+          (click)="onLogin()"
+          [disabled]="loginForm.invalid || loginForm.untouched">
+    Login
+  </button>
+
+</form>
