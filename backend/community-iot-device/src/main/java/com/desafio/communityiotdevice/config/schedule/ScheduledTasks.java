@@ -1,9 +1,10 @@
 package com.desafio.communityiotdevice.config.schedule;
 
-import com.desafio.communityiotdevice.modules.commanddescription.model.CommandDescription;
+import com.desafio.communityiotdevice.modules.command.model.Command;
 import com.desafio.communityiotdevice.modules.device.model.Device;
 import com.desafio.communityiotdevice.modules.device.service.DeviceService;
-import com.desafio.communityiotdevice.modules.parameter.model.Parameter;
+import com.desafio.communityiotdevice.modules.measurement.model.Measurement;
+import com.desafio.communityiotdevice.modules.measurement.service.MeasurementService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ public class ScheduledTasks {
     private static final int PORT = 3000;
 
     private final DeviceService deviceService;
+    private final MeasurementService measurementService;
 
     @Transactional
     @Scheduled(fixedDelay = 60000)
@@ -30,18 +32,18 @@ public class ScheduledTasks {
         List<Device> allDevices = deviceService.getAllDevices();
         for (Device device : allDevices) {
             String url = device.getUrl();
-            List<CommandDescription> commandDescriptions = device.getCommandDescriptions();
+            List<Command> commands = device.getCommands();
 
             try (Socket socket = new Socket(url, PORT);
                  InputStream input = socket.getInputStream();
                  OutputStream output = socket.getOutputStream()) {
 
-                for (CommandDescription commandDescription : commandDescriptions) {
+                for (Command command : commands) {
 
-                    List<String> parameters = commandDescription.getCommand().getParameters().stream().map(Parameter::getName).toList();
-                    String fullCommand = commandDescription.getCommand().getCommand() + " " + String.join(" ", parameters) + "\n";
+//                    List<String> parameters = command.getParameters().stream().map(Parameter::getName).toList();
+//                    String fullCommand = command.getCommand() + " " + String.join(" ", parameters) + "\n";
 
-                    output.write(fullCommand.getBytes());
+                    output.write(command.getCommand().getBytes());
                     output.flush();
 
                     StringBuilder response = new StringBuilder();
@@ -52,7 +54,11 @@ public class ScheduledTasks {
                             break;
                         }
                     }
-                    commandDescription.setResult(response.toString().split("\n")[0]);
+                    Measurement measurement = new Measurement();
+                    measurement.setResult(Double.parseDouble(response.toString()));
+                    measurement.setDevice(device);
+                    measurement.setCommand(command);
+                    measurementService.save(measurement);
                 }
 
             } catch (Exception e) {

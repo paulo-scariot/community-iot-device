@@ -31,7 +31,11 @@ public class User implements UserDetails {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @OneToMany(mappedBy = "user", targetEntity = Device.class, fetch = FetchType.LAZY)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role")
+    private RoleEnum role;
+
+    @OneToMany(mappedBy = "user", targetEntity = Device.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Device> devices = new ArrayList<>();
 
     public static User of(UserRequest request){

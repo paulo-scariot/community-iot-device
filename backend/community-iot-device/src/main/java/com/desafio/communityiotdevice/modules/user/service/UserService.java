@@ -1,10 +1,11 @@
 package com.desafio.communityiotdevice.modules.user.service;
 
-import com.desafio.communityiotdevice.config.exception.ValidationException;
+import com.desafio.communityiotdevice.config.exception.CustomHttpException;
 import com.desafio.communityiotdevice.config.messages.SuccessResponse;
 import com.desafio.communityiotdevice.modules.user.dto.LoginResponse;
 import com.desafio.communityiotdevice.modules.user.dto.UserRequest;
 import com.desafio.communityiotdevice.modules.user.dto.UserResponse;
+import com.desafio.communityiotdevice.modules.user.model.RoleEnum;
 import com.desafio.communityiotdevice.modules.user.model.User;
 import com.desafio.communityiotdevice.modules.user.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -12,9 +13,12 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -56,7 +60,7 @@ public class UserService implements UserDetailsService {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(userRequest.getUsername(), userRequest.getPassword()));
         } catch (BadCredentialsException e) {
-            throw new ValidationException("Invalid username or password");
+            throw new CustomHttpException(HttpStatus.BAD_REQUEST, "Invalid username or password");
         }
 
         UserDetails userDetails = this.loadUserByUsername(userRequest.getUsername());
@@ -65,7 +69,7 @@ public class UserService implements UserDetailsService {
             String auth = userRequest.getUsername() + ":" + userRequest.getPassword();
             return new LoginResponse(Base64.getEncoder().encodeToString(auth.getBytes()));
         }
-        throw new ValidationException("Invalid username or password");
+        throw new CustomHttpException(HttpStatus.BAD_REQUEST, "Invalid username or password");
     }
 
     public Page<UserResponse> getUsers(String filter, int page, int size) {
@@ -82,7 +86,7 @@ public class UserService implements UserDetailsService {
     public User findById(Integer id) {
         return userRepository
                 .findById(id)
-                .orElseThrow(() -> new ValidationException("User with id " + id + " not found"));
+                .orElseThrow(() -> new CustomHttpException(HttpStatus.NOT_FOUND, "User with id " + id + " not found"));
     }
 
     public User findByUsername(String username) {
@@ -91,41 +95,76 @@ public class UserService implements UserDetailsService {
     }
 
     public UserResponse save(UserRequest request) {
-        validateUserData(request);
+        validateIsAdmin();
+        validateUserRequest(request);
+        User byUsername = findByUsername(request.getUsername());
+        if (byUsername != null) {
+            throw new CustomHttpException(HttpStatus.BAD_REQUEST, "User with username: " + request.getUsername() + " already exists");
+        }
         User user = new User();
         user.setUsername(request.getUsername());
         user.setPassword(bCryptPasswordEncoder.encode(request.getPassword()));
+        user.setRole(request.getRole());
         return UserResponse.of(userRepository.save(user));
     }
 
     public UserResponse update(UserRequest request,
                                   Integer id) {
-        validateUserData(request);
+        validateIsAdmin();
+        validateUserRequest(request);
         validateId(id);
+        findById(id);
         var user = User.of(request);
         user.setId(id);
+        user.setPassword(bCryptPasswordEncoder.encode(request.getPassword()));
         userRepository.save(user);
         return UserResponse.of(user);
     }
 
     public SuccessResponse delete(Integer id) {
+        validateIsAdmin();
         validateId(id);
+        findById(id);
         userRepository.deleteById(id);
         return SuccessResponse.create("User with id " + id + " has been deleted");
     }
 
-    private void validateUserData(UserRequest request) {
+    private void validateUserRequest(UserRequest request) {
         if (isEmpty(request.getUsername())){
-            throw new ValidationException("The username cannot be empty");
+            throw new CustomHttpException(HttpStatus.BAD_REQUEST, "The username cannot be empty");
         }
         if (isEmpty(request.getPassword())){
-            throw new ValidationException("The password cannot be empty");
+            throw new CustomHttpException(HttpStatus.BAD_REQUEST, "The password cannot be empty");
+        }
+        if (isEmpty(request.getRole())){
+            throw new CustomHttpException(HttpStatus.BAD_REQUEST, "The role cannot be empty");
         }
     }
 
     private void validateId(Integer id) {
         if (isEmpty(id)){
-            throw new ValidationException("The user id cannot be empty");
+            throw new CustomHttpException(HttpStatus.BAD_REQUEST, "The user id cannot be empty");
         }
     }
+
+    private void validateIsAdmin(){
+        User userByContext = findUserByContext();
+        if (userByContext.getRole().equals(RoleEnum.USER)){
+            throw new CustomHttpException(HttpStatus.FORBIDDEN, "You are not allow to do this action!");
+        }
+    }
+
+    public User findUserByContext() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            Object principal = authentication.getPrincipal();
+
+            if (principal instanceof UserDetails userDetails) {
+                String username = userDetails.getUsername();
+                return findByUsername(username);
+            }
+        }
+        throw new CustomHttpException(HttpStatus.BAD_REQUEST, "Username not found");
+    }
+
 }

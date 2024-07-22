@@ -1,7 +1,8 @@
 package com.desafio.communityiotdevice.modules.device.model;
 
-import com.desafio.communityiotdevice.modules.commanddescription.model.CommandDescription;
+import com.desafio.communityiotdevice.modules.command.model.Command;
 import com.desafio.communityiotdevice.modules.device.dto.DeviceRequest;
+import com.desafio.communityiotdevice.modules.measurement.model.Measurement;
 import com.desafio.communityiotdevice.modules.user.model.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -39,12 +40,17 @@ public class Device {
     @Column(name = "status", nullable = false)
     private Boolean status = Boolean.TRUE;
 
-    @OneToMany(mappedBy = "device", targetEntity = CommandDescription.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<CommandDescription> commandDescriptions = new ArrayList<>();
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "fk_device_user"))
     private User user;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "devices_commands", joinColumns = {@JoinColumn(name = "device_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "command_id", referencedColumnName = "id")})
+    private List<Command> commands = new ArrayList<>();
+
+    @OneToMany(mappedBy = "device", targetEntity = Measurement.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Measurement> measurements = new ArrayList<>();
 
     public static Device of(DeviceRequest request,
                             User user){
@@ -54,6 +60,8 @@ public class Device {
                 .description(request.getDescription())
                 .manufacturer(request.getManufacturer())
                 .url(request.getUrl())
+                .status(request.getStatus())
+                .commands(request.getCommands().stream().map(Command::of).toList())
                 .user(user)
                 .build();
     }

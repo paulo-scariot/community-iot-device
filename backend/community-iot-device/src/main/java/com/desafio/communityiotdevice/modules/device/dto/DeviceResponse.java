@@ -1,6 +1,6 @@
 package com.desafio.communityiotdevice.modules.device.dto;
 
-import com.desafio.communityiotdevice.modules.commanddescription.dto.CommandDescriptionResponse;
+import com.desafio.communityiotdevice.modules.command.dto.CommandResponse;
 import com.desafio.communityiotdevice.modules.device.model.Device;
 import com.desafio.communityiotdevice.modules.user.dto.UserResponse;
 import lombok.Data;
@@ -17,7 +17,7 @@ public class DeviceResponse {
     private String url;
     private Boolean status;
     private UserResponse user;
-    private List<CommandDescriptionResponse> commandDescriptions;
+    private List<CommandResponse> commands;
 
     public static DeviceResponse of(Device device) {
         DeviceResponse deviceResponse = new DeviceResponse();
@@ -28,7 +28,7 @@ public class DeviceResponse {
         deviceResponse.setUrl(device.getUrl());
         deviceResponse.setStatus(device.getStatus());
         deviceResponse.setUser(UserResponse.of(device.getUser()));
-        deviceResponse.setCommandDescriptions(device.getCommandDescriptions().stream().map(CommandDescriptionResponse::of).toList());
+        deviceResponse.setCommands(device.getCommands().stream().map(CommandResponse::of).toList());
         return deviceResponse;
     }
 }

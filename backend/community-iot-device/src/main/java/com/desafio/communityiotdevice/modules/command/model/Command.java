@@ -1,8 +1,8 @@
 package com.desafio.communityiotdevice.modules.command.model;
 
 import com.desafio.communityiotdevice.modules.command.dto.CommandRequest;
-import com.desafio.communityiotdevice.modules.commanddescription.model.CommandDescription;
-import com.desafio.communityiotdevice.modules.parameter.model.Parameter;
+import com.desafio.communityiotdevice.modules.device.model.Device;
+import com.desafio.communityiotdevice.modules.measurement.model.Measurement;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,14 +23,17 @@ public class Command {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(name = "description", nullable = false)
+    private String description;
+
     @Column(name = "command", nullable = false)
     private String command;
 
-    @OneToMany(mappedBy = "command", targetEntity = CommandDescription.class, fetch = FetchType.LAZY)
-    private List<CommandDescription> commandDescriptions = new ArrayList<>();
+    @ManyToMany(mappedBy = "commands", fetch = FetchType.LAZY)
+    private List<Device> devices = new ArrayList<>();
 
-    @OneToMany(mappedBy = "command", targetEntity = Parameter.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Parameter> parameters = new ArrayList<>();
+    @OneToMany(mappedBy = "command", targetEntity = Measurement.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Measurement> measurements = new ArrayList<>();
 
     public static Command of(CommandRequest request) {
         Command command = new Command();

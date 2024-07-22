@@ -9,4 +9,5 @@ public interface DeviceRepository extends JpaRepository<Device, Integer> {
 
     Page<Device> findByIdentifierContainingIgnoreCase(String filter, Pageable pageable);
 
+    Boolean existsByCommandsId(Integer id);
 }

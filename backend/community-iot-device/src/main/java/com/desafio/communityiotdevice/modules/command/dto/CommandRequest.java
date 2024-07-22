@@ -5,5 +5,7 @@ import lombok.Data;
 @Data
 public class CommandRequest {
 
+    private Integer id;
     private String command;
+    private String description;
 }
