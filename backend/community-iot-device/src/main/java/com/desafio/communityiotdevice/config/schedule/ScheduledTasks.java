@@ -29,7 +29,7 @@ public class ScheduledTasks {
     @Transactional
     @Scheduled(fixedDelay = 60000)
     public void reportCurrentTime() {
-        List<Device> allDevices = deviceService.getAllDevices();
+        List<Device> allDevices = deviceService.getAllDevicesActive();
         for (Device device : allDevices) {
             String url = device.getUrl();
             List<Command> commands = device.getCommands();
