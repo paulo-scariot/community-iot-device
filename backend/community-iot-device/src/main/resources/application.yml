@@ -24,7 +24,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.H2Dialect
@@ -40,4 +40,4 @@ spring:
 
 app-config:
   secrets:
-    api-secret: ${API_SECRET:YXV0aC1hcGktc2VjcmV0LWRldi0xMjM0NTY=}
+    telnet-port: ${TELNET_PORT:3000}

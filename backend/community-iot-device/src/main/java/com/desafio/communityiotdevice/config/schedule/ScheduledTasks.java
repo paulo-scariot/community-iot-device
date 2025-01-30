@@ -8,11 +8,13 @@ import com.desafio.communityiotdevice.modules.measurement.service.MeasurementSer
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.ConnectException;
 import java.net.Socket;
 import java.util.List;
 
@@ -21,7 +23,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ScheduledTasks {
 
-    private static final int PORT = 3000;
+    @Value("${app-config.secrets.telnet-port}")
+    private Integer port;
 
     private final DeviceService deviceService;
     private final MeasurementService measurementService;
@@ -34,14 +37,11 @@ public class ScheduledTasks {
             String url = device.getUrl();
             List<Command> commands = device.getCommands();
 
-            try (Socket socket = new Socket(url, PORT);
+            try (Socket socket = new Socket(url, port);
                  InputStream input = socket.getInputStream();
                  OutputStream output = socket.getOutputStream()) {
 
                 for (Command command : commands) {
-
-//                    List<String> parameters = command.getParameters().stream().map(Parameter::getName).toList();
-//                    String fullCommand = command.getCommand() + " " + String.join(" ", parameters) + "\n";
 
                     output.write(command.getCommand().getBytes());
                     output.flush();
@@ -55,14 +55,18 @@ public class ScheduledTasks {
                         }
                     }
                     Measurement measurement = new Measurement();
+                    double measurementDouble = Double.parseDouble(response.toString());
+                    log.info("Telnet Server-> host {}, port {}, Mesarument Received: {}", url, port, measurementDouble);
                     measurement.setResult(Double.parseDouble(response.toString()));
                     measurement.setDevice(device);
                     measurement.setCommand(command);
                     measurementService.save(measurement);
                 }
 
+            } catch (ConnectException e) {
+                System.err.println("Failed to connect to Telnet server: " + e.getMessage());
             } catch (Exception e) {
-                log.info("Error occured while send the commands", e);
+                System.err.println("An unexpected error occurred: " + e.getMessage());
             }
         }
     }
