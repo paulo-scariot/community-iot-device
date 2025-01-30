@@ -26,12 +26,4 @@ server.listen(PORT, () => {
 function processCommand(command) {
     const randomNumber = Math.floor(Math.random() * 101);
     return randomNumber;
-    // switch(command) {
-    //     case 'hello':
-    //         return 'Hello, world!';
-    //     case 'date':
-    //         return new Date().toString();
-    //     default:
-    //         return `Unknown command: ${command}`;
-    // }
 }

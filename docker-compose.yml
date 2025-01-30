@@ -1,0 +1,22 @@
+services:
+  backend:
+    build: './backend/community-iot-device'
+    container_name: backend-community-iot-device
+    ports:
+      - 8080:8080
+    depends_on:
+      - telnet
+    environment:
+      - TELNET_PORT=3000
+
+  frontend:
+    build: './frontend'
+    container_name: frontend-community-iot-device
+    ports:
+      - 80:80
+
+  telnet:
+    build: './telnet-server'
+    container_name: telnet-community-iot-device
+    ports:
+      - 3000:3000
