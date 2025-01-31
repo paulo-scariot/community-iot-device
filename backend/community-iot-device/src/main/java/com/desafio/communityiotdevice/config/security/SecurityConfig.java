@@ -23,6 +23,8 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private static final String[] WHITE_LIST_URL = { "/","/user/login", "/v3/api-docs/**", "/swagger-ui/**" };
+
     private final UserService userService;
 
     @Bean
@@ -41,7 +43,7 @@ public class SecurityConfig {
                 .headers(headers -> headers
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/","/user/login").permitAll()
+                        .requestMatchers(WHITE_LIST_URL).permitAll()
                         .anyRequest().authenticated())
                 .httpBasic(withDefaults()).userDetailsService(userService);
         return http.build();
