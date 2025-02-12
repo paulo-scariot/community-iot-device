@@ -38,6 +38,13 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", targetEntity = Device.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Device> devices = new ArrayList<>();
 
+    public User(String username, String password, RoleEnum role, List<Device> devices) {
+        this.username = username;
+        this.password = password;
+        this.role = role;
+        this.devices = devices;
+    }
+
     public static User of(UserRequest request){
         User user = new User();
         BeanUtils.copyProperties(request, user);

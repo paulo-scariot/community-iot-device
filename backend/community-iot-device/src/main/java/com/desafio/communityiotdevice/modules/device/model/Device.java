@@ -52,6 +52,17 @@ public class Device {
     @OneToMany(mappedBy = "device", targetEntity = Measurement.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Measurement> measurements = new ArrayList<>();
 
+    public Device(String identifier, String description, String manufacturer, String url, Boolean status, User user, List<Command> commands, List<Measurement> measurements) {
+        this.identifier = identifier;
+        this.description = description;
+        this.manufacturer = manufacturer;
+        this.url = url;
+        this.status = status;
+        this.user = user;
+        this.commands = commands;
+        this.measurements = measurements;
+    }
+
     public static Device of(DeviceRequest request,
                             User user){
         return Device

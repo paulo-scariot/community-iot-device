@@ -42,10 +42,6 @@ public class DeviceService {
         return devicePage.map(DeviceResponse::of);
     }
 
-    public List<Device> getAllDevices() {
-        return deviceRepository.findAll();
-    }
-
     public List<Device> getAllDevicesActive() {
         return deviceRepository.findByStatusTrue();
     }
@@ -109,7 +105,7 @@ public class DeviceService {
 
     private void validateId(Integer id) {
         if (isEmpty(id)){
-            throw new CustomHttpException(HttpStatus.BAD_REQUEST, "The parameter id cannot be empty");
+            throw new CustomHttpException(HttpStatus.BAD_REQUEST, "The device id cannot be empty");
         }
     }
 

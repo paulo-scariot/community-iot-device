@@ -35,24 +35,4 @@ public class MeasurementController {
         return measurementService.getMeasurements(filter, page, rpp);
     }
 
-//    @GetMapping("{id}")
-//    public MeasurementResponse get(@PathVariable Integer id){
-//        return MeasurementResponse.of(measurementService.findById(id));
-//    }
-//
-//    @PostMapping
-//    public MeasurementResponse save(@RequestBody MeasurementRequest request) {
-//        return measurementService.save(request);
-//    }
-//
-//    @PutMapping("{id}")
-//    public MeasurementResponse update(@RequestBody MeasurementRequest request,
-//                                      @PathVariable Integer id) {
-//        return measurementService.update(request, id);
-//    }
-//
-//    @DeleteMapping("{id}")
-//    public SuccessResponse delete(@PathVariable Integer id) {
-//        return measurementService.delete(id);
-//    }
 }

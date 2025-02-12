@@ -34,6 +34,13 @@ public class Measurement {
     @JoinColumn(name = "command_id", foreignKey = @ForeignKey(name = "fk_commandsresults_command"))
     private Command command;
 
+    public Measurement(LocalDateTime createdAt, Double result, Device device, Command command) {
+        this.createdAt = createdAt;
+        this.result = result;
+        this.device = device;
+        this.command = command;
+    }
+
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();

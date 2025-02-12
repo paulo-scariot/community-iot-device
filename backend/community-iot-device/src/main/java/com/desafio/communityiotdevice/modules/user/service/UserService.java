@@ -62,14 +62,8 @@ public class UserService implements UserDetailsService {
         } catch (BadCredentialsException e) {
             throw new CustomHttpException(HttpStatus.BAD_REQUEST, "Invalid username or password");
         }
-
-        UserDetails userDetails = this.loadUserByUsername(userRequest.getUsername());
-
-        if (userDetails != null) {
-            String auth = userRequest.getUsername() + ":" + userRequest.getPassword();
-            return new LoginResponse(Base64.getEncoder().encodeToString(auth.getBytes()));
-        }
-        throw new CustomHttpException(HttpStatus.BAD_REQUEST, "Invalid username or password");
+        String auth = userRequest.getUsername() + ":" + userRequest.getPassword();
+        return new LoginResponse(Base64.getEncoder().encodeToString(auth.getBytes()));
     }
 
     public Page<UserResponse> getUsers(String filter, int page, int size) {

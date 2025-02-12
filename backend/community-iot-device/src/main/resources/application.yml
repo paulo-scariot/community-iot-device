@@ -35,8 +35,8 @@ spring:
     init:
       mode: always
       continue-on-error: true
-      platform: postgresql
-      schema-locations: classpath:import.sql
+      platform: h2
+      data-locations: classpath:import.sql
 
 app-config:
   secrets:

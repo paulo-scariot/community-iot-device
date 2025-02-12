@@ -36,7 +36,7 @@ public class ScheduledTasks {
         for (Device device : allDevices) {
             String url = device.getUrl();
             List<Command> commands = device.getCommands();
-
+            port = (port != null) ? port : 3000;
             try (Socket socket = new Socket(url, port);
                  InputStream input = socket.getInputStream();
                  OutputStream output = socket.getOutputStream()) {

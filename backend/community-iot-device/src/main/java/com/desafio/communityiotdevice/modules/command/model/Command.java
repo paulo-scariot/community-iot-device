@@ -35,6 +35,13 @@ public class Command {
     @OneToMany(mappedBy = "command", targetEntity = Measurement.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Measurement> measurements = new ArrayList<>();
 
+    public Command(String description, String command, List<Device> devices, List<Measurement> measurements) {
+        this.description = description;
+        this.command = command;
+        this.devices = devices;
+        this.measurements = measurements;
+    }
+
     public static Command of(CommandRequest request) {
         Command command = new Command();
         BeanUtils.copyProperties(request, command);
