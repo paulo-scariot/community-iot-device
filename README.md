@@ -30,3 +30,44 @@ respectiva medição de suas métricas.
 5. O acesso aos dados do dispositivo deve ser realizado utilizando o protocolo telnet, para a url cadastrada,
    enviando-se o comando selecionado e coletando a resposta.
 6. A aplicação deve aplicar métodos para otimizar as requisições e reduzir o tempo de resposta.
+
+### Como executar o projeto
+
+O projeto utiliza o banco em memória H2, então não é necessário se preocupar com configurações de banco de dados. Você
+pode executar cada parte do projeto (backend, frontend, servidor telnet) separadamente.
+Os comandos para executa-los são:
+
+```bash
+# executar o servidor telnet
+npm run app.js
+
+# executar o frontend em angular
+ng serve
+
+# executar o backend
+./gradlew bootRun
+```
+
+Ou você pode utilizar o docker compose para executar as três partes do projeto através do comando:
+`docker compose up -d --build`. O frontend será executado na porta 80, o
+backend na porta 8080 e o servidor telnet na porta 3000. Já há dois usuários cadastrados (mockados)
+além de alguns comandos e dispositivos. As credenciais dos usuários cadastrados são:
+
+| Username | Password | Tipo  |
+|:--------:|:--------:|:-----:|
+|  admin   |   pass   | ADMIN |
+|   user   |   pass   | USER  |
+
+### As rotas do frontend são:
+
+* `/login` para logar na aplicação;
+* `/` para ver o dashboard;
+* `/dispositivos` para ver ou cadastrar dispositivos;
+* `/usuarios` para ver ou cadastrar usuarios;
+* `/comandos` para ver ou cadastrar comandos.
+
+### Documentação APIs (Swagger)
+
+Para visualizar a documentação das APIS utilize o rota do backend `/swagger-ui/index.html`. Caso você utilize o docker
+compose para subir o backend a rota será `http://localhost:8080/swagger-ui/index.html`
+
