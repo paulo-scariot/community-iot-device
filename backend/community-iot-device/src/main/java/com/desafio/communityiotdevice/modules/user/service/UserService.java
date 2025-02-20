@@ -43,15 +43,15 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserDetails userDetails = userRepository.findByUsername(username);
+        User user = userRepository.findByUsername(username);
 
-        if (userDetails == null) {
+        if (user == null) {
             throw new UsernameNotFoundException("User with username: " + username + " not found");
         }
 
         return org.springframework.security.core.userdetails.User.builder()
-                .username(userDetails.getUsername())
-                .password(userDetails.getPassword())
+                .username(user.getUsername())
+                .password(user.getPassword())
                 .build();
     }
 
@@ -153,8 +153,8 @@ public class UserService implements UserDetailsService {
         if (authentication != null && authentication.isAuthenticated()) {
             Object principal = authentication.getPrincipal();
 
-            if (principal instanceof UserDetails userDetails) {
-                String username = userDetails.getUsername();
+            if (principal instanceof User user) {
+                String username = user.getUsername();
                 return findByUsername(username);
             }
         }
